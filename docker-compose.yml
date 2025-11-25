@@ -1,7 +1,7 @@
 services:
   n8n:
     privileged: true
-    image: n8nio/n8n
+    image: n8nio/n8n:latest
     container_name: n8n
     restart: unless-stopped
     ports:
@@ -15,18 +15,10 @@ services:
     volumes:
       - ${DATA_DIR}/n8n_data:/home/node/.n8n
 
-  duckdns:
-    privileged: true
-    image: linuxserver/duckdns
-    container_name: duckdns
-    restart: unless-stopped
-    environment:
-      - SUBDOMAINS=${DUCKDNS_SUBDOMAINS}
-      - TOKEN=${DUCKDNS_TOKEN}
-
   ollama:
     privileged: true
-    image: ollama/ollama
+    image: ollama/ollama:latest
+    #! build: ./devops/builds/ollama
     container_name: ollama
     restart: unless-stopped
     ports:
@@ -43,6 +35,32 @@ services:
     #           count: all
     #           capabilities: [gpu]
 
+    #! FOR TESTING
+    #! qdrant:
+    #!   container_name: qdrant
+    #!   image: qdrant/qdrant:latest
+    #!   ports:
+    #!     - "6333:6333"
+    #!   volumes:
+    #!     - ${DATA_DIR}/qdrant_data:/qdrant/storage
+    #!   restart: unless-stopped
+
+    #! rag-api:
+    #!   container_name: rag-api
+    #!   build: ./devops/rag
+    #!   ports:
+    #!     - "8000:8000"
+    #!   environment:
+    #!     - QDRANT_HOST=${QDRANT_HOST}
+    #!     - OLLAMA_HOST=${OLLAMA_HOST}
+    #!   depends_on:
+    #!     - qdrant
+    #!     - ollama
+    #!   volumes:
+    #!     - ${DATA_DIR}/rag_data:/app/docs
+    #!   restart: unless-stopped
+
 volumes:
   n8n_data:
   ollama_data:
+  #! qdrant_data:
